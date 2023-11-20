@@ -32,7 +32,7 @@ reply_routes.get('/:commentId', async (req, res) => {
 })
 
 // add a reply
-reply_routes.put('/:commentId', authenticate, async (req, res) => {
+reply_routes.post('/:commentId', authenticate, async (req, res) => {
   const { replyValue } = req.body
   const {commentId} = req.params
   const { _id } = req.user
@@ -48,29 +48,29 @@ reply_routes.put('/:commentId', authenticate, async (req, res) => {
     res.json({ message: err })
   }
 })
-// // delete a comment
-// comment_routes.delete('/delete/:id', authenticate, async (req, res) => {
-//   const commentId = req.params.id
-//   const { _id } = req.user
-//   try {
-//     const resp = await commentModel.deleteOne({ _id: commentId, user: _id })
-//     res.json({ message: 'comment deleted', comment: resp })
-//   } catch (err) {
-//     res.json({ message: err })
-//   }
-// })
-// // add a comment
-// comment_routes.post('/addcomment', authenticate, async (req, res) => {
-//   const { commentValue, post } = req.body
-//   const { _id } = req.user
-//   try {
-//     const newComment = await new commentModel({
-//       commentValue,
-//       post,
-//       user: _id,
-//     }).save()
-//     res.json({ message: 'comment created', comment: newComment })
-//   } catch (err) {
-//     res.json({ message: err })
-//   }
-// })
+// delete a reply
+reply_routes.delete('/:id', authenticate, async (req, res) => {
+  const replyId = req.params.id
+  try {
+    await replyModel.deleteOne({_id: replyId})
+    res.json({ message: 'reply deleted'})
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
+// update a reply
+reply_routes.put('/:id', authenticate, async (req, res) => {
+  const replyId = req.params.id
+  const {replyValue} = req.body
+  try {
+    let reply = await replyModel.findOne({_id: replyId}).exec()
+    reply = await reply.populate({path: 'user', select:'-password'})
+    reply.replyValue = replyValue
+    await reply.save()
+    res.json({ message: 'reply updated', reply})
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+

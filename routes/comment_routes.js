@@ -19,7 +19,7 @@ const authenticate = (req, res, next) => {
   })
 }
 // get all the comments
-comment_routes.get('/allcomments/:id', async (req, res) => {
+comment_routes.get('/:id', async (req, res) => {
   const post = req.params.id
   const comments = await commentModel
     .find({ post })
@@ -32,8 +32,9 @@ comment_routes.get('/allcomments/:id', async (req, res) => {
 })
 
 // add a comment
-comment_routes.post('/addcomment', authenticate, async (req, res) => {
-  const { commentValue, post } = req.body
+comment_routes.post('/:id', authenticate, async (req, res) => {
+  const post = req.params.id
+  const { commentValue } = req.body
   const { _id } = req.user
   try {
     const newComment = await new commentModel({
@@ -51,7 +52,6 @@ comment_routes.post('/addcomment', authenticate, async (req, res) => {
 comment_routes.delete('/:id', authenticate, async (req, res) => {
   const commentId = req.params.id
   const { _id } = req.user
-  
   try {
     await commentModel.deleteOne({ _id: commentId, user: _id })
     await replyModel.deleteMany({comment: commentId})
@@ -60,18 +60,18 @@ comment_routes.delete('/:id', authenticate, async (req, res) => {
     res.json({ message: err })
   }
 })
-// add a comment
-comment_routes.post('/addcomment', authenticate, async (req, res) => {
-  const { commentValue, post } = req.body
+// update a comment
+comment_routes.put('/:id', authenticate, async (req, res) => {
+  const commentId = req.params.id
+  const {commentValue} = req.body
   const { _id } = req.user
   try {
-    const newComment = await new commentModel({
-      commentValue,
-      post,
-      user: _id,
-    }).save()
-    res.json({ message: 'comment created', comment: newComment })
+    const comment = await commentModel.findOne({_id: commentId}).exec()
+    comment.commentValue = commentValue
+    await comment.save()
+    res.json({ message: 'comment updated', comment})
   } catch (err) {
     res.json({ message: err })
   }
 })
+
