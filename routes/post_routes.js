@@ -43,7 +43,7 @@ post_routes.get('/:id', async (req, res) => {
 })
 
 // add a post
-post_routes.post('/', w, async (req, res) => {
+post_routes.post('/', async (req, res) => {
   const { title, description, imageUrl } = req.body
   const { _id } = req.user
   try {
