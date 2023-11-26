@@ -32,7 +32,6 @@ post_routes.get('/', async (req, res) => {
 // get all posts of a user
 post_routes.get('/:id', async (req, res) => {
   const userId = req.params.id
-  console.log(userId);
   const posts = await postModel
     .find({user: userId})
     .populate({
@@ -44,7 +43,7 @@ post_routes.get('/:id', async (req, res) => {
 })
 
 // add a post
-post_routes.post('/', authenticate, async (req, res) => {
+post_routes.post('/', w, async (req, res) => {
   const { title, description, imageUrl } = req.body
   const { _id } = req.user
   try {

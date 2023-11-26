@@ -13,15 +13,15 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  followers:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  }],
-  followings:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  }]
+  // followers:[{
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'User',
+  //   required: true,
+  // }],
+  // followings:[{
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'User',
+  //   required: true,
+  // }]
 })
 export const userModel = mongoose.model('User', userSchema)
